@@ -1,24 +1,28 @@
 # optimizer
-optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0005)
-optim_wrapper = dict(type='OptimWrapper', optimizer=optimizer, clip_grad=None)
+optimizer = dict(type='SGD', # Type of optimiser
+                 lr=0.01, # Learning rate of optimisers 
+                 momentum=0.9, # Momentum of optimiser
+                 weight_decay=0.0005) # Weight decay of optimiser
+optim_wrapper = dict(type='OptimWrapper', optimizer=optimizer, clip_grad=None) # opmitizer wrapper for common interface
 # learning policy
 param_scheduler = [
     dict(
-        type='PolyLR',
-        eta_min=1e-4,
-        power=0.9,
-        begin=0,
-        end=40000,
-        by_epoch=False)
+        type='PolyLR', # Policy of sheduler
+        eta_min=1e-4, # Minimum learning rate at the end of sheduling
+        power=0.9, # Power of polynomial decay
+        begin=0, # Step at which to start updating the parameters
+        end=40000, # Step at which to stop updating the parameters
+        by_epoch=False) # Whether to count by epoch or not
 ]
 # training schedule for 40k
 train_cfg = dict(type='IterBasedTrainLoop', max_iters=40000, val_interval=4000)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 default_hooks = dict(
-    timer=dict(type='IterTimerHook'),
-    logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False),
-    param_scheduler=dict(type='ParamSchedulerHook'),
-    checkpoint=dict(type='CheckpointHook', by_epoch=False, interval=4000),
-    sampler_seed=dict(type='DistSamplerSeedHook'),
+    timer=dict(type='IterTimerHook'), # Log the time spent during iteration
+    logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False), # Collect and write logs from different
+# components of ''Runner''
+    param_scheduler=dict(type='ParamSchedulerHook'), # Update hyper-parameters
+    checkpoint=dict(type='CheckpointHook', by_epoch=False, interval=4000), # Save checkpoints periodically
+    sampler_seed=dict(type='DistSamplerSeedHook'), # Data-loading sampler
     visualization=dict(type='SegVisualizationHook'))
