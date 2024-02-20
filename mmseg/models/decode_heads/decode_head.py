@@ -258,6 +258,10 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         Returns:
             dict[str, Tensor]: a dictionary of loss components
         """
+        # Implement the BASELINE calculation from the same batch of inputs
+        # Maybe implement some dropout to differentiate the forward pass
+        baseline_logits = self.forward(inputs)
+        
         seg_logits = self.forward(inputs)
         losses = self.loss_by_feat(seg_logits, batch_data_samples)
         return losses
