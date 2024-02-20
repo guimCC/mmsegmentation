@@ -4,10 +4,6 @@ import torch.nn as nn
 from mmseg.registry import MODELS
 from .utils import weight_loss
 
-def batch_loss()
-
-
-
 
 @weighted_loss
 def RewardWeightedLogLikelihoodLoss(pred, target, reward):
