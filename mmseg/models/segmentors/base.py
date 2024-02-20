@@ -29,6 +29,12 @@ class BaseSegmentor(BaseModel, metaclass=ABCMeta):
                  init_cfg: OptMultiConfig = None):
         super().__init__(
             data_preprocessor=data_preprocessor, init_cfg=init_cfg)
+        #print('BASE SEGMENTOR INITIALIZED !!!!!!!!!!!!!!!!!!!!')
+        #print(self)
+        #print('\n\n\n\n')
+        #exit()
+        # seems that only called for SedDataPreprocessor (not the heads)
+        
 
     @property
     def with_neck(self) -> bool:
@@ -90,7 +96,12 @@ class BaseSegmentor(BaseModel, metaclass=ABCMeta):
             - If ``mode="predict"``, return a list of :obj:`DetDataSample`.
             - If ``mode="loss"``, return a dict of tensor.
         """
-        if mode == 'loss':
+        #print("BASE SEGMENTOR FORWARD !")
+        #print(self)
+        #print(mode)
+        
+        #exit()
+        if mode == 'loss':  
             return self.loss(inputs, data_samples)
         elif mode == 'predict':
             return self.predict(inputs, data_samples)

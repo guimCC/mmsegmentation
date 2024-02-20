@@ -112,6 +112,8 @@ class PSPHead(BaseDecodeHead):
 
     def forward(self, inputs):
         """Forward function."""
+        #print("SAMBIÑA SAMBIÑA SAMBIÑA")
+        # This function is indeed called when training
         output = self._forward_feature(inputs)
         output = self.cls_seg(output)
         return output
