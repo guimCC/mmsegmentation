@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 
 from mmseg.registry import MODELS
-from .utils import weight_loss
+#from .utils import weight_loss
 
 
-@weighted_loss
+
 def RewardWeightedLogLikelihoodLoss(pred, target, reward):
     assert pred.size() == target.size() and target.numel() > 0
     
@@ -26,15 +26,30 @@ def RewardWeightedLogLikelihoodLoss(pred, target, reward):
 
 @MODELS.register_module()
 class ReinforceLoss(nn.Module):
-    def __init__(self, reduction='mean', loss_weight=1.0):
-        super(MyLoss, self).__init__()
+    def __init__(self, reduction='mean', loss_weight=1.0, loss_name= 'loss_rein'):
+        super(ReinforceLoss, self).__init__()
         self.reduction = reduction
         self.loss_weight = loss_weight
+        self._loss_name = loss_name # must add for backpropagation
 
-    def forward(self, pred, target, weight=None, avg_factor=None, reduction_override=None):
+    def forward(self, pred, target, weight=None, avg_factor=None, reduction_override=None, ignore_index=-100):
         assert reduction_override in (None, 'none', 'mean', 'sum')
         reduction = (
             reduction_override if reduction_override else self.reduction)
         loss = self.loss_weight * RewardWeightedLogLikelihoodLoss(
             pred, target, weight, reduction=reduction, avg_factor=avg_factor)
         return loss
+    @property
+    def loss_name(self):
+        """Loss Name.
+
+        This function must be implemented and will return the name of this
+        loss function. This name will be used to combine different loss items
+        by simple sum operation. In addition, if you want this loss item to be
+        included into the backward graph, `loss_` must be the prefix of the
+        name.
+
+        Returns:
+            str: The name of this loss item.
+        """
+        return self._loss_name

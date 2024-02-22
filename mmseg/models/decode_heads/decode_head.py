@@ -159,6 +159,10 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
             self.dropout = nn.Dropout2d(dropout_ratio)
         else:
             self.dropout = None
+        
+        # CUSTOM reward function as a loss
+        self.reward_loss = build_loss(dict(
+            type='IoULoss'))
 
     def extra_repr(self):
         """Extra repr."""
@@ -263,6 +267,12 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         baseline_logits = self.forward(inputs)
         
         seg_logits = self.forward(inputs)
+        # Compute the rewards:
+        sample_rewards = self.reward(seg_logits, batch_data_samples)
+        baseline_rewards = self.reward(baseline_logits, batch_data_samples)
+        
+        print("############ -> ", sample_rewards, baseline_rewards)
+        
         losses = self.loss_by_feat(seg_logits, batch_data_samples)
         return losses
 
@@ -308,7 +318,7 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
 
         seg_label = self._stack_batch_gt(batch_data_samples)
         loss = dict()
-        seg_logits = resize(
+        seg_logits = resize(# Resize the seg_logits to the same size as the seg_label
             input=seg_logits,
             size=seg_label.shape[2:],
             mode='bilinear',
@@ -323,7 +333,8 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
             losses_decode = [self.loss_decode]
         else:
             losses_decode = self.loss_decode
-        for loss_decode in losses_decode:
+        #print(losses_decode)
+        for loss_decode in losses_decode: # Iterate over the loss functions defined in the config
             if loss_decode.loss_name not in loss:
                 loss[loss_decode.loss_name] = loss_decode(
                     seg_logits,
@@ -368,3 +379,45 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
             mode='bilinear',
             align_corners=self.align_corners)
         return seg_logits
+    
+    def reward(self, seg_logits: Tensor,
+                     batch_data_samples: SampleList) -> dict:
+        """Compute reward
+
+        Args:
+            seg_logits (Tensor): The output from decode head forward function.
+            batch_data_samples (List[:obj:`SegDataSample`]): The seg
+                data samples. It usually includes information such
+                as `metainfo` and `gt_sem_seg`.
+
+        Returns:
+            dict[str, Tensor]: a dictionary of loss components
+        """
+
+        seg_label = self._stack_batch_gt(batch_data_samples)
+        loss = dict()
+        seg_logits = resize(# Resize the seg_logits to the same size as the seg_label
+            input=seg_logits,
+            size=seg_label.shape[2:],
+            mode='bilinear',
+            align_corners=self.align_corners)
+        if self.sampler is not None:
+            seg_weight = self.sampler.sample(seg_logits, seg_label)
+        else:
+            seg_weight = None
+        seg_label = seg_label.squeeze(1)
+
+        
+       
+        loss_v = self.reward_loss(
+            seg_logits,
+            seg_label,
+            weight=seg_weight,
+            ignore_index=self.ignore_index)
+        
+        acc = accuracy(
+            seg_logits, seg_label, ignore_index=self.ignore_index)
+        #loss['acc_seg'] = acc
+        # return the accuracy
+        
+        return loss_v # return the value
