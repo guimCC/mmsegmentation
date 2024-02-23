@@ -9,6 +9,7 @@ from mmseg.registry import MODELS
 #@weight_loss
 def IntersectionOverUnionLoss(pred, target, eps):
     # Assuming pred is of shape [N, C, H, W] and target is [N, H, W]
+    # Where N is the batch size, C is the number of classes, H is the height and W is the width
     # Convert predictions to class labels
     pred = F.softmax(pred, dim=1)
     pred = torch.argmax(pred, dim=1)
@@ -31,7 +32,7 @@ def IntersectionOverUnionLoss(pred, target, eps):
     # IoU loss
     loss = 1 - mean_iou
     
-    return torch.tensor(loss, requires_grad=True)
+    return torch.tensor(loss, requires_grad=True, device=pred.device)
 
 @MODELS.register_module()
 class IoULoss(nn.Module):

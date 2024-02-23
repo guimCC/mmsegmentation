@@ -35,22 +35,8 @@ model = dict(
         align_corners=False,
         loss_decode=dict(
             # TODO: Change the loss function to ReinforceLoss
-            type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0)),
-    auxiliary_head=dict( # No need on auxiliary head (only use for computing auxiliary losses)
-        # TODO: Change the auxiliary head to FCNHead Reinforce (changing the forward method)
-        type='FCNHead',
-        in_channels=1024,
-        in_index=2,
-        channels=256,
-        num_convs=1,
-        concat_input=False,
-        dropout_ratio=0.1,
-        num_classes=19,
-        norm_cfg=norm_cfg,
-        align_corners=False,
-        loss_decode=dict(
-            # TODO: Change the loss function to ReinforceLoss
-            type='CrossEntropyLoss', use_sigmoid=False, loss_weight=0.4)),
+            type='ReinforceLoss')),
+
     # model training and testing settings
     train_cfg=dict(),
     test_cfg=dict(mode='whole'))

@@ -138,8 +138,9 @@ class EncoderDecoder(BaseSegmentor):
         losses = dict()
         loss_decode = self.decode_head.loss(inputs, data_samples,
                                             self.train_cfg)
-
+        print("LOSSED DECODE HEAD 1 ->", loss_decode)
         losses.update(add_prefix(loss_decode, 'decode'))
+        print("LOSSED DECODE HEAD 2 ->", losses)
         return losses
 
     def _auxiliary_head_forward_train(self, inputs: List[Tensor],
@@ -182,6 +183,7 @@ class EncoderDecoder(BaseSegmentor):
         if self.with_auxiliary_head:
             loss_aux = self._auxiliary_head_forward_train(x, data_samples)
             losses.update(loss_aux)
+        print("LOSSED DECODE HEAD 3 ->", losses)
 
         return losses
 
