@@ -46,8 +46,8 @@ def RewardWeightedLogLikelihoodLoss(pred, target, reward, ignore_index=255):
 
     #loss = -weighted_log_probs[not_ignore_mask].mean()    
     #print("SAMBIÑAAAAAAAAAAAAAAAAAAAAAAAA")
-    print("AAAAAAAAAAAAAAAAA->", loss)
-    print("BBBBBBBBBBBBBBBBB->", reward)
+    #print("AAAAAAAAAAAAAAAAA->", loss)
+    #print("BBBBBBBBBBBBBBBBB->", reward)
     
     return loss #torch.tensor(0.5, requires_grad=True)
 

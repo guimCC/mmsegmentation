@@ -10,4 +10,7 @@ _base_ = [
 """
 crop_size = (512, 1024)
 data_preprocessor = dict(size=crop_size)
-model = dict(data_preprocessor=data_preprocessor)
+model = dict(data_preprocessor=data_preprocessor,
+             decode_head=dict(
+                 init_cfg=dict(type='Pretrained', checkpoint="/home/gcasadella/mmsegmentation/workdir/test_resume_rearning/checkpoint_weights.pth"
+             )))

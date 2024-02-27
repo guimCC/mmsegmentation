@@ -288,7 +288,7 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         Returns:
             dict[str, Tensor]: a dictionary of loss components
         """
-        print("############ BUILDS -> ", self.loss_decode, self.reward_loss, self.reinforce_loss)
+        #print("############ BUILDS -> ", self.loss_decode, self.reward_loss, self.reinforce_loss)
         
         # Implement the BASELINE calculation from the same batch of inputs
         # Maybe implement some dropout to differentiate the forward pass
@@ -299,10 +299,10 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         baseline_rewards = self.reward(baseline_logits, batch_data_samples)
         r = sample_rewards - baseline_rewards
         
-        print("############ REWARD -> ", sample_rewards, baseline_rewards, r)
+        #print("############ REWARD -> ", sample_rewards, baseline_rewards, r)
         
         losses = self.loss_by_feat_reinforce(seg_logits, batch_data_samples, r)
-        print("############ LOSSES -> ", losses)
+        #print("############ LOSSES -> ", losses)
         
         return losses
 

@@ -1,5 +1,5 @@
 _base_ = [
-    '../_base_/models/custom/deeplab_reinforce_v1.py', '../_base_/datasets/cityscapes.py',
+    '../_base_/models/custom/deeplab_reinforce_v2.py', '../_base_/datasets/cityscapes.py',
     '../_base_/custom_runtime.py', '../_base_/schedules/schedule_custom.py'
 ]
 """

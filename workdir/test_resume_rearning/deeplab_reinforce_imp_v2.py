@@ -25,8 +25,8 @@ data_preprocessor = dict(
 data_root = 'data/cityscapes/'
 dataset_type = 'CityscapesDataset'
 default_hooks = dict(
-    checkpoint=dict(by_epoch=False, interval=4000, type='CheckpointHook'),
-    logger=dict(interval=50, log_metric_by_epoch=False, type='LoggerHook'),
+    checkpoint=dict(by_epoch=False, interval=1000, type='CheckpointHook'),
+    logger=dict(interval=10, log_metric_by_epoch=False, type='LoggerHook'),
     param_scheduler=dict(type='ParamSchedulerHook'),
     sampler_seed=dict(type='DistSamplerSeedHook'),
     timer=dict(type='IterTimerHook'),
@@ -106,6 +106,10 @@ model = dict(
         dropout_ratio=0.1,
         in_channels=2048,
         in_index=3,
+        init_cfg=dict(
+            checkpoint=
+            '/home/gcasadella/mmsegmentation/workdir/test_resume_rearning/checkpoint_weights.pth',
+            type='Pretrained'),
         loss_decode=dict(type='ReinforceLoss'),
         norm_cfg=dict(requires_grad=True, type='SyncBN'),
         num_classes=19,
@@ -124,12 +128,12 @@ param_scheduler = [
     dict(
         begin=0,
         by_epoch=False,
-        end=50000,
+        end=40000,
         eta_min=0.0001,
         power=0.9,
         type='PolyLR'),
 ]
-resume = True
+resume = False
 test_cfg = dict(type='TestLoop')
 test_dataloader = dict(
     batch_size=1,
@@ -163,7 +167,7 @@ test_pipeline = [
     dict(type='LoadAnnotations'),
     dict(type='PackSegInputs'),
 ]
-train_cfg = dict(max_iters=50000, type='IterBasedTrainLoop', val_interval=4000)
+train_cfg = dict(max_iters=40000, type='IterBasedTrainLoop', val_interval=1000)
 train_dataloader = dict(
     batch_size=2,
     dataset=dict(
