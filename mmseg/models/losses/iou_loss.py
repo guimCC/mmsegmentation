@@ -8,9 +8,10 @@ from mmseg.registry import MODELS
 
 #@weight_loss
 def IntersectionOverUnionLoss(pred, target, eps):
-    # Assuming pred is of shape [N, C, H, W] and target is [N, H, W]
+   # Assuming pred is of shape [N, C, H, W] and target is [N, H, W]
     # Where N is the batch size, C is the number of classes, H is the height and W is the width
     # Convert predictions to class labels
+    n_classes = pred.shape[1]
     pred = F.softmax(pred, dim=1)
     pred = torch.argmax(pred, dim=1)
     
@@ -19,18 +20,24 @@ def IntersectionOverUnionLoss(pred, target, eps):
     
     # Calculate IoU for each class and then average across classes
     ious = []
-    for clss in range(pred.shape[1]):  # iterate over each class
-        pred_inds = pred == clss
-        target_inds = target == clss
+    for clss in range(n_classes):  # iterate over each class
+        pred_inds = pred == clss # pixels predicted as class clss
+        
+        target_inds = target == clss # pixels where the true class is clss
+        
         intersection = (pred_inds & target_inds).float().sum()
+        
         union = (pred_inds | target_inds).float().sum() + eps
-        ious.append((intersection / union).item())
+        
+        if union.item() > eps:
+            ious.append((intersection / union).item())
 
     # Average IoU across classes
     mean_iou = sum(ious) / len(ious)
     
     # IoU loss
-    loss = 1 - mean_iou
+    # loss = 1 - mean_iou
+    loss = mean_iou
     
     return torch.tensor(loss, requires_grad=True, device=pred.device)
 
