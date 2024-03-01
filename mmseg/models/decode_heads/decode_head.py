@@ -266,8 +266,15 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         """
         #print("############ BUILDS -> ", self.loss_decode, self.reward_loss, self.reinforce_loss)
         
-
+        #print("## Input size -> ", len(inputs))
+        #print("## Input 0 size -> ", inputs[0].shape)
+        #print("## Input 1 size -> ", inputs[1].shape)
+        #print("## Input 2 size -> ", inputs[2].shape)
+        #print("## Input 3 size -> ", inputs[3].shape)
+        
         seg_logits = self.forward(inputs)
+        
+        #print("## Seg Logits size -> ", seg_logits.shape)
 
         losses = self.loss_by_feat(seg_logits, batch_data_samples)
         #print("############ LOSSES -> ", losses)
