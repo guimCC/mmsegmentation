@@ -88,7 +88,7 @@ def main():
     cfg.resume = args.resume
 
     # add auto learning rate
-    cfg['auto_scale_lr'] = dict(enable=True, base_batch_size=2)
+    #cfg['auto_scale_lr'] = dict(enable=True, base_batch_size=2)
 
 
     # build the runner from config

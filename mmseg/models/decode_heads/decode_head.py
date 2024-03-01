@@ -250,7 +250,7 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         output = self.conv_seg(feat)
         return output
 
-    def loss_0(self, inputs: Tuple[Tensor], batch_data_samples: SampleList,
+    def loss(self, inputs: Tuple[Tensor], batch_data_samples: SampleList,
              train_cfg: ConfigType) -> dict:
         """Forward function for training.
 
@@ -274,7 +274,7 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         
         return losses
     
-    def loss(self, inputs: Tuple[Tensor], batch_data_samples: SampleList,
+    def loss_0(self, inputs: Tuple[Tensor], batch_data_samples: SampleList,
              train_cfg: ConfigType) -> dict:
         """Forward function for training.
 
