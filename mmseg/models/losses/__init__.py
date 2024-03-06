@@ -14,6 +14,9 @@ from .utils import reduce_loss, weight_reduce_loss, weighted_loss
 
 from .iou_loss import IoULoss, IntersectionOverUnionLoss
 from .reinforce_loss import ReinforceLoss, RewardWeightedLogLikelihoodLoss
+from .cross_entropy_reward_loss import CrossEntropyRewardLoss, cross_entropy_reward 
+from .mIoU_loss import mIoULoss#, reset, add, value, ConfusionMatrix
+from .iou_metric_loss import IoUMetricLoss
 
 __all__ = [
     'accuracy', 'Accuracy', 'cross_entropy', 'binary_cross_entropy',
@@ -21,5 +24,7 @@ __all__ = [
     'weight_reduce_loss', 'weighted_loss', 'LovaszLoss', 'DiceLoss',
     'FocalLoss', 'TverskyLoss', 'OhemCrossEntropy', 'BoundaryLoss',
     'HuasdorffDisstanceLoss', 'SiLogLoss', 'IoULoss', 'ReinforceLoss', 
-    'RewardWeightedLogLikelihoodLoss', 'IntersectionOverUnionLoss'
+    'RewardWeightedLogLikelihoodLoss', 'IntersectionOverUnionLoss',
+    'CrossEntropyRewardLoss', 'cross_entropy_reward', 'mIoULoss',# 'reset', 'add', 'value', 'ConfusionMatrix',
+    'IoUMetricLoss'
 ]

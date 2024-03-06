@@ -109,6 +109,8 @@ class CityscapesMetric(BaseMetric):
             self.results.append((png_filename, gt_filename))
 
     def compute_metrics(self, results: list) -> Dict[str, float]:
+        print(results)
+        print(results.shape)
         """Compute the metrics from processed results.
 
         Args:

@@ -9,7 +9,7 @@ from mmseg.registry import MODELS
 from .utils import get_class_weight, weight_reduce_loss
 
 
-def cross_entropy(pred,
+def cross_entropy_reward(pred,
                   label,
                   weight=None,
                   class_weight=None,
@@ -42,8 +42,8 @@ def cross_entropy(pred,
 
     # class_weight is a manual rescaling weight given to each class.
     # If given, has to be a Tensor of size C element-wise losses
-    #print("CE2 pred shape:", pred.shape)
-    #print("CE2 label shape:", label.shape)
+    # print("CE2 pred shape:", pred.shape)
+    # print("CE2 label shape:", label.shape)
     loss = F.cross_entropy(
         pred,
         label,
@@ -80,138 +80,8 @@ def cross_entropy(pred,
     return loss
 
 
-def _expand_onehot_labels(labels, label_weights, target_shape, ignore_index):
-    """Expand onehot labels to match the size of prediction."""
-    bin_labels = labels.new_zeros(target_shape)
-    valid_mask = (labels >= 0) & (labels != ignore_index)
-    inds = torch.nonzero(valid_mask, as_tuple=True)
-
-    if inds[0].numel() > 0:
-        if labels.dim() == 3:
-            bin_labels[inds[0], labels[valid_mask], inds[1], inds[2]] = 1
-        else:
-            bin_labels[inds[0], labels[valid_mask]] = 1
-
-    valid_mask = valid_mask.unsqueeze(1).expand(target_shape).float()
-
-    if label_weights is None:
-        bin_label_weights = valid_mask
-    else:
-        bin_label_weights = label_weights.unsqueeze(1).expand(target_shape)
-        bin_label_weights = bin_label_weights * valid_mask
-
-    return bin_labels, bin_label_weights, valid_mask
-
-
-def binary_cross_entropy(pred,
-                         label,
-                         weight=None,
-                         reduction='mean',
-                         avg_factor=None,
-                         class_weight=None,
-                         ignore_index=-100,
-                         avg_non_ignore=False,
-                         **kwargs):
-    """Calculate the binary CrossEntropy loss.
-
-    Args:
-        pred (torch.Tensor): The prediction with shape (N, 1).
-        label (torch.Tensor): The learning label of the prediction.
-            Note: In bce loss, label < 0 is invalid.
-        weight (torch.Tensor, optional): Sample-wise loss weight.
-        reduction (str, optional): The method used to reduce the loss.
-            Options are "none", "mean" and "sum".
-        avg_factor (int, optional): Average factor that is used to average
-            the loss. Defaults to None.
-        class_weight (list[float], optional): The weight for each class.
-        ignore_index (int): The label index to be ignored. Default: -100.
-        avg_non_ignore (bool): The flag decides to whether the loss is
-            only averaged over non-ignored targets. Default: False.
-            `New in version 0.23.0.`
-
-    Returns:
-        torch.Tensor: The calculated loss
-    """
-    if pred.size(1) == 1:
-        # For binary class segmentation, the shape of pred is
-        # [N, 1, H, W] and that of label is [N, H, W].
-        # As the ignore_index often set as 255, so the
-        # binary class label check should mask out
-        # ignore_index
-        assert label[label != ignore_index].max() <= 1, \
-            'For pred with shape [N, 1, H, W], its label must have at ' \
-            'most 2 classes'
-        pred = pred.squeeze(1)
-    if pred.dim() != label.dim():
-        assert (pred.dim() == 2 and label.dim() == 1) or (
-                pred.dim() == 4 and label.dim() == 3), \
-            'Only pred shape [N, C], label shape [N] or pred shape [N, C, ' \
-            'H, W], label shape [N, H, W] are supported'
-        # `weight` returned from `_expand_onehot_labels`
-        # has been treated for valid (non-ignore) pixels
-        label, weight, valid_mask = _expand_onehot_labels(
-            label, weight, pred.shape, ignore_index)
-    else:
-        # should mask out the ignored elements
-        valid_mask = ((label >= 0) & (label != ignore_index)).float()
-        if weight is not None:
-            weight = weight * valid_mask
-        else:
-            weight = valid_mask
-    # average loss over non-ignored and valid elements
-    if reduction == 'mean' and avg_factor is None and avg_non_ignore:
-        avg_factor = valid_mask.sum().item()
-
-    loss = F.binary_cross_entropy_with_logits(
-        pred, label.float(), pos_weight=class_weight, reduction='none')
-    # do the reduction for the weighted loss
-    loss = weight_reduce_loss(
-        loss, weight, reduction=reduction, avg_factor=avg_factor)
-
-    return loss
-
-
-def mask_cross_entropy(pred,
-                       target,
-                       label,
-                       reduction='mean',
-                       avg_factor=None,
-                       class_weight=None,
-                       ignore_index=None,
-                       **kwargs):
-    """Calculate the CrossEntropy loss for masks.
-
-    Args:
-        pred (torch.Tensor): The prediction with shape (N, C), C is the number
-            of classes.
-        target (torch.Tensor): The learning label of the prediction.
-        label (torch.Tensor): ``label`` indicates the class label of the mask'
-            corresponding object. This will be used to select the mask in the
-            of the class which the object belongs to when the mask prediction
-            if not class-agnostic.
-        reduction (str, optional): The method used to reduce the loss.
-            Options are "none", "mean" and "sum".
-        avg_factor (int, optional): Average factor that is used to average
-            the loss. Defaults to None.
-        class_weight (list[float], optional): The weight for each class.
-        ignore_index (None): Placeholder, to be consistent with other loss.
-            Default: None.
-
-    Returns:
-        torch.Tensor: The calculated loss
-    """
-    assert ignore_index is None, 'BCE loss does not support ignore_index'
-    # TODO: handle these two reserved arguments
-    assert reduction == 'mean' and avg_factor is None
-    num_rois = pred.size()[0]
-    inds = torch.arange(0, num_rois, dtype=torch.long, device=pred.device)
-    pred_slice = pred[inds, label].squeeze(1)
-    return F.binary_cross_entropy_with_logits(
-        pred_slice, target, weight=class_weight, reduction='mean')[None]
-
-
 @MODELS.register_module()
-class CrossEntropyLoss(nn.Module):
+class CrossEntropyRewardLoss(nn.Module):
     """CrossEntropyLoss.
 
     Args:
@@ -238,7 +108,7 @@ class CrossEntropyLoss(nn.Module):
                  reduction='mean',
                  class_weight=None,
                  loss_weight=1.0,
-                 loss_name='loss_ce',
+                 loss_name='loss_ce_reward',
                  avg_non_ignore=False):
         super().__init__()
         assert (use_sigmoid is False) or (use_mask is False)
@@ -255,12 +125,8 @@ class CrossEntropyLoss(nn.Module):
                 'labels, which is the same with PyTorch official '
                 'cross_entropy, set ``avg_non_ignore=True``.')
 
-        if self.use_sigmoid:
-            self.cls_criterion = binary_cross_entropy
-        elif self.use_mask:
-            self.cls_criterion = mask_cross_entropy
-        else:
-            self.cls_criterion = cross_entropy
+
+        self.cls_criterion = cross_entropy_reward
         self._loss_name = loss_name
 
     def extra_repr(self):
@@ -275,6 +141,7 @@ class CrossEntropyLoss(nn.Module):
                 avg_factor=None,
                 reduction_override=None,
                 ignore_index=-100,
+                reward=1.0,
                 **kwargs):
         """Forward function."""
         assert reduction_override in (None, 'none', 'mean', 'sum')
@@ -298,10 +165,15 @@ class CrossEntropyLoss(nn.Module):
             avg_non_ignore=self.avg_non_ignore,
             ignore_index=ignore_index,
             **kwargs)
-        #print("CE loss shape:", loss_cls.shape)
-        #print("CE loss:", loss_cls)
+        # print("CE loss shape:", loss_cls.shape)
+        # print("CE loss:", loss_cls)
+        
+        loss_cls_reward = loss_cls * reward
+        # print("CE loss reward shape:", loss_cls_reward.shape)
+        # print("CE loss reward:", loss_cls_reward)
+        
         #print("CE criterion:", self.cls_criterion)
-        return loss_cls
+        return loss_cls_reward
 
     @property
     def loss_name(self):
