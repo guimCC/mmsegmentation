@@ -9,7 +9,7 @@ data_preprocessor = dict(
     seg_pad_val=255)
 model = dict(
     type='EncoderDecoder',
-    init_cfg=dict(type='Pretrained', checkpoint='/home/gcasadella/mmsegmentation/ckp/deeplabv3_r50-d8_512x1024_40k_cityscapes_20200605_022449-acadc2f8.pth'),
+    #init_cfg=dict(type='Pretrained', checkpoint='/home/gcasadella/mmsegmentation/ckp/deeplabv3_r50-d8_512x1024_40k_cityscapes_20200605_022449-acadc2f8.pth'),
     data_preprocessor=data_preprocessor,
     pretrained='open-mmlab://resnet50_v1c',
     backbone=dict(

@@ -83,17 +83,24 @@ class IoUMetricLoss(nn.Module):
             torch.Tensor: Intersection over Union.
         """
         iou = total_area_intersect / total_area_union#(total_area_union + 1e-10)
-        #print(iou)
-        
-        return np.nanmean(iou)
+        # print(iou)
+        result = np.nanmean(iou)
+        #print(total_area_intersect, total_area_union, total_area_pred_label, total_area_label, iou)
+        if np.isnan(result):
+            return 0.5
+        else:
+            return result
     
     def forward(self, pred_label, label):
         pred = torch.argmax(pred_label, dim=1)
         results = self.batch_intersection_union(pred, label)
+        #results = [self.intersect_and_union(pred[0], label[0])]
 
         a, b, c, d = self.compute_total(results)
 
-        return self.iou(a, b, c, d)
+        corrected_loss = 1 - self.iou(a, b, c, d)
+        
+        return corrected_loss
          
     @property
     def loss_name(self):

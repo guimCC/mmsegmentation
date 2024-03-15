@@ -66,7 +66,6 @@ def weight_reduce_loss(loss,
         if weight.dim() > 1:
             assert weight.size(1) == 1 or weight.size(1) == loss.size(1)
         loss = loss * weight
-
     # if avg_factor is not specified, just reduce the loss
     if avg_factor is None:
         loss = reduce_loss(loss, reduction)

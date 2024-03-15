@@ -11,6 +11,7 @@ from .utils import get_class_weight, weight_reduce_loss
 
 def cross_entropy_reward(pred,
                   label,
+                  reward = 1.0,
                   weight=None,
                   class_weight=None,
                   reduction='mean',
@@ -50,7 +51,8 @@ def cross_entropy_reward(pred,
         weight=class_weight,
         reduction='none',
         ignore_index=ignore_index)
-
+    
+    
     # apply weights and do the reduction
     # average loss over non-ignored elements
     # pytorch's official cross_entropy average loss over non-ignored elements
@@ -74,10 +76,24 @@ def cross_entropy_reward(pred,
 
     if weight is not None:
         weight = weight.float()
+    
+    # Multiply the loss by the reward before reduction
+    reward = torch.tensor(reward, dtype=torch.float32, device=pred.device, requires_grad=False)
+    reward = reward.view(loss.shape[0], 1, 1)
+    #print("CE2 reward:", reward)
+    loss_r = loss * reward
+    
+
+    
     loss = weight_reduce_loss(
         loss, weight=weight, reduction=reduction, avg_factor=avg_factor)
-
-    return loss
+    loss_r = weight_reduce_loss(
+        loss_r, weight=weight, reduction=reduction, avg_factor=avg_factor)
+    
+    #print("CE2 reward_loss:", loss_r)
+    #print("CE2 loss shape:", loss.shape)
+    #print("CE2 loss:", loss)
+    return loss_r
 
 
 @MODELS.register_module()
@@ -126,7 +142,6 @@ class CrossEntropyRewardLoss(nn.Module):
                 'cross_entropy, set ``avg_non_ignore=True``.')
 
 
-        self.cls_criterion = cross_entropy_reward
         self._loss_name = loss_name
 
     def extra_repr(self):
@@ -137,11 +152,11 @@ class CrossEntropyRewardLoss(nn.Module):
     def forward(self,
                 cls_score,
                 label,
+                reward=1.0,
                 weight=None,
                 avg_factor=None,
                 reduction_override=None,
                 ignore_index=-100,
-                reward=1.0,
                 **kwargs):
         """Forward function."""
         assert reduction_override in (None, 'none', 'mean', 'sum')
@@ -155,9 +170,10 @@ class CrossEntropyRewardLoss(nn.Module):
         else:
             class_weight = None
         # Note: for BCE loss, label < 0 is invalid.
-        loss_cls = self.loss_weight * self.cls_criterion(
+        loss_cls = self.loss_weight * cross_entropy_reward(
             cls_score,
             label,
+            reward,
             weight,
             class_weight=class_weight,
             reduction=reduction,
@@ -168,7 +184,7 @@ class CrossEntropyRewardLoss(nn.Module):
         # print("CE loss shape:", loss_cls.shape)
         # print("CE loss:", loss_cls)
         
-        loss_cls_reward = loss_cls * reward
+        loss_cls_reward = loss_cls
         # print("CE loss reward shape:", loss_cls_reward.shape)
         # print("CE loss reward:", loss_cls_reward)
         

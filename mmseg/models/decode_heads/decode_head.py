@@ -174,7 +174,7 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
             type='IoUMetricLoss', num_classes=self.num_classes, ignore_index=self.ignore_index))
     
         self.reinforce_loss = build_loss(dict(
-            type='ReinforceLoss'))
+            type='CrossEntropyRewardLoss'))
         
     def extra_repr(self):
         """Extra repr."""
@@ -310,17 +310,26 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         # Implement the BASELINE calculation from the same batch of inputs
         # Maybe implement some dropout to differentiate the forward pass
         #baseline_logits = self.forward(inputs)
+        
         seg_logits = self.forward(inputs)
-        # Compute the rewards:
-        sample_rewards = self.reward(seg_logits, batch_data_samples)
-        print("############ REWARD mIoUv2 -> ", sample_rewards)
+        # Compute the rewards for each batched image:
+        mIoU_each_photo = self.reward(seg_logits, batch_data_samples)
+        mean_mIoU_other_photos = (np.sum(mIoU_each_photo) - mIoU_each_photo) / (len(mIoU_each_photo) - 1)
+        reward_vector_self_baseline = mIoU_each_photo - mean_mIoU_other_photos
+        reward_vector_self_less_constant = mIoU_each_photo - 0.15
+        #print("############ REWARD mIoUv2 -> ", mIoU_each_photo)
+        #print("############ REWARD mIoU -> ", mIoU_each_photo, mean_mIoU_other_photos, reward_vector_self_baseline)
+        
         #baseline_rewards = self.reward(baseline_logits, batch_data_samples)
         #r = sample_rewards - baseline_rewards
         
         #print("############ REWARD -> ", sample_rewards, baseline_rewards, r)
         
-        #losses = self.loss_by_feat_reinforce(seg_logits, batch_data_samples, r)
-        losses = self.loss_by_feat(seg_logits, batch_data_samples)
+        # Since we've got batch_size = 2, we          
+        losses = self.loss_by_feat_reinforce(seg_logits, batch_data_samples, reward_vector_self_less_constant)#, reward_vector_self_baseline)
+        
+        
+        #losses = self.loss_by_feat(seg_logits, batch_data_samples)
         #print("############ LOSSES -> ", losses)
         
         return losses
@@ -352,7 +361,7 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         
         #print("############ REWARD -> ", sample_rewards, baseline_rewards, r)
         
-        losses = self.loss_by_feat_reinforce(seg_logits, batch_data_samples, r)
+        losses = self.loss_by_feat_reinforce(seg_logits, batch_data_samples, reward=r)
         #print("############ LOSSES -> ", losses)
         
         return losses
