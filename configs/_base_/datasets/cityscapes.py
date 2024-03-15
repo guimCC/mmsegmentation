@@ -41,7 +41,8 @@ tta_pipeline = [
         ])
 ]
 train_dataloader = dict(
-    batch_size=2, # batch size of a single GPU
+    # Increased batch size, maximmum on the 
+    batch_size=4, # batch size of a single GPU
     num_workers=2, # worker to pre-fetch data for each single gpu
     persistent_workers=True, # shut down the worker processes after an epoch end, can accelerate training speed
     sampler=dict(type='InfiniteSampler', shuffle=True), # Randomly shuffle during training

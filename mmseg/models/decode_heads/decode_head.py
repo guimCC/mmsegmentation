@@ -8,12 +8,15 @@ import torch.nn as nn
 from mmengine.model import BaseModule
 from torch import Tensor
 
+import numpy as np
+
 from mmseg.structures import build_pixel_sampler
 from mmseg.utils import ConfigType, SampleList
 from ..builder import build_loss
+#from ..builder import build_metric
 from ..losses import accuracy
 from ..utils import resize
-
+from mmseg.registry import MODELS
 
 class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
     """Base class for BaseDecodeHead.
@@ -159,7 +162,20 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
             self.dropout = nn.Dropout2d(dropout_ratio)
         else:
             self.dropout = None
-
+        
+        # CUSTOM reward function as a loss
+        self.reward_loss = build_loss(dict(
+            type='IoULoss'))
+    
+        self.mIoU_loss = build_loss(dict(
+            type='mIoULoss', num_classes=self.num_classes, ignore_index=self.ignore_index))#, ignore_index=self.ignore_index))
+        
+        self.mIoU_metric_loss = build_loss(dict(
+            type='IoUMetricLoss', num_classes=self.num_classes, ignore_index=self.ignore_index))
+    
+        self.reinforce_loss = build_loss(dict(
+            type='CrossEntropyRewardLoss'))
+        
     def extra_repr(self):
         """Extra repr."""
         s = f'input_transform={self.input_transform}, ' \
@@ -244,6 +260,37 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         output = self.conv_seg(feat)
         return output
 
+    def loss_original(self, inputs: Tuple[Tensor], batch_data_samples: SampleList,
+             train_cfg: ConfigType) -> dict:
+        """Forward function for training.
+
+        Args:
+            inputs (Tuple[Tensor]): List of multi-level img features.
+            batch_data_samples (list[:obj:`SegDataSample`]): The seg
+                data samples. It usually includes information such
+                as `img_metas` or `gt_semantic_seg`.
+            train_cfg (dict): The training config.
+
+        Returns:
+            dict[str, Tensor]: a dictionary of loss components
+        """
+        #print("############ BUILDS -> ", self.loss_decode, self.reward_loss, self.reinforce_loss)
+        
+        #print("## Input size -> ", len(inputs))
+        #print("## Input 0 size -> ", inputs[0].shape)
+        #print("## Input 1 size -> ", inputs[1].shape)
+        #print("## Input 2 size -> ", inputs[2].shape)
+        #print("## Input 3 size -> ", inputs[3].shape)
+        
+        seg_logits = self.forward(inputs)
+        
+        #print("## Seg Logits size -> ", seg_logits.shape)
+
+        losses = self.loss_by_feat(seg_logits, batch_data_samples)
+        #print("############ LOSSES -> ", losses)
+        
+        return losses
+    
     def loss(self, inputs: Tuple[Tensor], batch_data_samples: SampleList,
              train_cfg: ConfigType) -> dict:
         """Forward function for training.
@@ -258,8 +305,65 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         Returns:
             dict[str, Tensor]: a dictionary of loss components
         """
+        #print("############ BUILDS -> ", self.loss_decode, self.reward_loss, self.reinforce_loss)
+        
+        # Implement the BASELINE calculation from the same batch of inputs
+        # Maybe implement some dropout to differentiate the forward pass
+        #baseline_logits = self.forward(inputs)
+        
         seg_logits = self.forward(inputs)
-        losses = self.loss_by_feat(seg_logits, batch_data_samples)
+        # Compute the rewards for each batched image:
+        mIoU_each_photo = self.reward(seg_logits, batch_data_samples)
+        mean_mIoU_other_photos = (np.sum(mIoU_each_photo) - mIoU_each_photo) / (len(mIoU_each_photo) - 1)
+        reward_vector_self_baseline = mIoU_each_photo - mean_mIoU_other_photos
+        reward_vector_self_less_constant = mIoU_each_photo - 0.15
+        #print("############ REWARD mIoUv2 -> ", mIoU_each_photo)
+        #print("############ REWARD mIoU -> ", mIoU_each_photo, mean_mIoU_other_photos, reward_vector_self_baseline)
+        
+        #baseline_rewards = self.reward(baseline_logits, batch_data_samples)
+        #r = sample_rewards - baseline_rewards
+        
+        #print("############ REWARD -> ", sample_rewards, baseline_rewards, r)
+        
+        # Since we've got batch_size = 2, we          
+        losses = self.loss_by_feat_reinforce(seg_logits, batch_data_samples, reward_vector_self_less_constant)#, reward_vector_self_baseline)
+        
+        
+        #losses = self.loss_by_feat(seg_logits, batch_data_samples)
+        #print("############ LOSSES -> ", losses)
+        
+        return losses
+    
+    def loss_v0(self, inputs: Tuple[Tensor], batch_data_samples: SampleList,
+             train_cfg: ConfigType) -> dict:
+        """Forward function for training.
+
+        Args:
+            inputs (Tuple[Tensor]): List of multi-level img features.
+            batch_data_samples (list[:obj:`SegDataSample`]): The seg
+                data samples. It usually includes information such
+                as `img_metas` or `gt_semantic_seg`.
+            train_cfg (dict): The training config.
+
+        Returns:
+            dict[str, Tensor]: a dictionary of loss components
+        """
+        #print("############ BUILDS -> ", self.loss_decode, self.reward_loss, self.reinforce_loss)
+        
+        # Implement the BASELINE calculation from the same batch of inputs
+        # Maybe implement some dropout to differentiate the forward pass
+        baseline_logits = self.forward(inputs)
+        seg_logits = self.forward(inputs)
+        # Compute the rewards:
+        sample_rewards = self.reward(seg_logits, batch_data_samples)
+        baseline_rewards = self.reward(baseline_logits, batch_data_samples)
+        r = sample_rewards - baseline_rewards
+        
+        #print("############ REWARD -> ", sample_rewards, baseline_rewards, r)
+        
+        losses = self.loss_by_feat_reinforce(seg_logits, batch_data_samples, reward=r)
+        #print("############ LOSSES -> ", losses)
+        
         return losses
 
     def predict(self, inputs: Tuple[Tensor], batch_img_metas: List[dict],
@@ -288,6 +392,46 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
         ]
         return torch.stack(gt_semantic_segs, dim=0)
 
+    def loss_by_feat_reinforce(self, seg_logits: Tensor,
+                     batch_data_samples: SampleList, reward: Tensor) -> dict:
+        """Compute segmentation loss.
+
+        Args:
+            seg_logits (Tensor): The output from decode head forward function.
+            batch_data_samples (List[:obj:`SegDataSample`]): The seg
+                data samples. It usually includes information such
+                as `metainfo` and `gt_sem_seg`.
+
+        Returns:
+            dict[str, Tensor]: a dictionary of loss components
+        """
+
+        seg_label = self._stack_batch_gt(batch_data_samples)
+        loss = dict()
+        seg_logits = resize(# Resize the seg_logits to the same size as the seg_label
+            input=seg_logits,
+            size=seg_label.shape[2:],
+            mode='bilinear',
+            align_corners=self.align_corners)
+        if self.sampler is not None:
+            seg_weight = self.sampler.sample(seg_logits, seg_label)
+        else:
+            seg_weight = None
+        seg_label = seg_label.squeeze(1)
+
+        loss_decode = self.reinforce_loss
+        
+        loss[self.reinforce_loss.loss_name] = loss_decode(
+                  seg_logits,
+                  seg_label,
+                  weight=seg_weight,
+                  ignore_index=self.ignore_index,
+                  reward=reward)
+        
+        loss['acc_seg'] = accuracy(
+            seg_logits, seg_label, ignore_index=self.ignore_index)
+        return loss
+    
     def loss_by_feat(self, seg_logits: Tensor,
                      batch_data_samples: SampleList) -> dict:
         """Compute segmentation loss.
@@ -304,7 +448,7 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
 
         seg_label = self._stack_batch_gt(batch_data_samples)
         loss = dict()
-        seg_logits = resize(
+        seg_logits = resize(# Resize the seg_logits to the same size as the seg_label
             input=seg_logits,
             size=seg_label.shape[2:],
             mode='bilinear',
@@ -319,7 +463,8 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
             losses_decode = [self.loss_decode]
         else:
             losses_decode = self.loss_decode
-        for loss_decode in losses_decode:
+        #print(losses_decode)
+        for loss_decode in losses_decode: # Iterate over the loss functions defined in the config
             if loss_decode.loss_name not in loss:
                 loss[loss_decode.loss_name] = loss_decode(
                     seg_logits,
@@ -364,3 +509,43 @@ class BaseDecodeHead(BaseModule, metaclass=ABCMeta):
             mode='bilinear',
             align_corners=self.align_corners)
         return seg_logits
+    
+    def reward(self, seg_logits: Tensor,
+                     batch_data_samples: SampleList) -> dict:
+        """Compute reward
+
+        Args:
+            seg_logits (Tensor): The output from decode head forward function.
+            batch_data_samples (List[:obj:`SegDataSample`]): The seg
+                data samples. It usually includes information such
+                as `metainfo` and `gt_sem_seg`.
+
+        Returns:
+            dict[str, Tensor]: a dictionary of loss components
+        """
+
+        seg_label = self._stack_batch_gt(batch_data_samples)
+
+        seg_logits = resize(# Resize the seg_logits to the same size as the seg_label
+            input=seg_logits,
+            size=seg_label.shape[2:],
+            mode='bilinear',
+            align_corners=self.align_corners)
+
+        seg_label = seg_label.squeeze(1)
+        
+        reward_values = np.zeros(seg_logits.shape[0])
+        #rw2 = np.zeros(seg_logits.shape[0])
+        #print(seg_logits.shape, seg_label.shape)
+        for i in range(seg_logits.shape[0]):
+            #self.mIoU_loss.reset() # Reset the reward computation
+            #print(seg_logits[i:i+1].shape, seg_label[i:i+1].shape)
+            #self.mIoU_loss.add(seg_logits[i:i+1], seg_label[i:i+1])
+            
+            #rw2[i] = self.mIoU_loss.value()
+            reward_values[i] = self.mIoU_metric_loss.forward(seg_logits[i:i+1], seg_label[i:i+1])
+            #print("############ REWARD -> ", reward_values[i])
+        
+        #print("############ REWARD mIoU -> ", rw2)
+        
+        return reward_values

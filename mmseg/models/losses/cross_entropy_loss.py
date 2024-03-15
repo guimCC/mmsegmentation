@@ -42,6 +42,8 @@ def cross_entropy(pred,
 
     # class_weight is a manual rescaling weight given to each class.
     # If given, has to be a Tensor of size C element-wise losses
+    #print("CE2 pred shape:", pred.shape)
+    #print("CE2 label shape:", label.shape)
     loss = F.cross_entropy(
         pred,
         label,
@@ -276,6 +278,9 @@ class CrossEntropyLoss(nn.Module):
                 **kwargs):
         """Forward function."""
         assert reduction_override in (None, 'none', 'mean', 'sum')
+        #print("CE score shape:", cls_score.shape)
+        #print("CE label shape:", label.shape)
+        
         reduction = (
             reduction_override if reduction_override else self.reduction)
         if self.class_weight is not None:
@@ -293,6 +298,9 @@ class CrossEntropyLoss(nn.Module):
             avg_non_ignore=self.avg_non_ignore,
             ignore_index=ignore_index,
             **kwargs)
+        #print("CE loss shape:", loss_cls.shape)
+        #print("CE loss:", loss_cls)
+        #print("CE criterion:", self.cls_criterion)
         return loss_cls
 
     @property

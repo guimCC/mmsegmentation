@@ -101,8 +101,10 @@ class BaseSegmentor(BaseModel, metaclass=ABCMeta):
         #print(mode)
         
         #exit()
-        if mode == 'loss':  
-            return self.loss(inputs, data_samples)
+        if mode == 'loss':
+            lss = self.loss(inputs, data_samples)
+            #print("LOSS IN BASE SEGMENTOR->", lss)
+            return lss
         elif mode == 'predict':
             return self.predict(inputs, data_samples)
         elif mode == 'tensor':

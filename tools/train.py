@@ -87,6 +87,10 @@ def main():
     # resume training
     cfg.resume = args.resume
 
+    # add auto learning rate
+    #cfg['auto_scale_lr'] = dict(enable=True, base_batch_size=2)
+
+
     # build the runner from config
     if 'runner_type' not in cfg:
         # build the default runner
@@ -96,6 +100,7 @@ def main():
         # if 'runner_type' is set in the cfg
         runner = RUNNERS.build(cfg)
 
+    #Hardcoded since config file doesn't seem to work
     # start training
     runner.train()
 
