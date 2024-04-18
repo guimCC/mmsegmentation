@@ -1,15 +1,14 @@
 import os.path as osp
 
-import mmcv
+
 import numpy as np
 from PIL import Image
 
-from .builder import DATASETS
-from .custom import CustomDataset
-
+from mmseg.registry import DATASETS
+from .basesegdataset import BaseSegDataset
 
 @DATASETS.register_module()
-class EasyPortraitPSDataset(CustomDataset):
+class EasyPortraitPSDataset(BaseSegDataset):
     """EasyPortrait dataset.
     
     In segmentation map annotation for EasyPortrait, 0 stands for background,
