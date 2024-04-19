@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=2,3 PORT=29502 bash /home/gcasadella/mmsegmentation/tools/dist_train.sh /home/gcasadella/mmsegmentation/configs/custom/mapillary/deeplab_from_start_mp.py 2 --work-dir /home/gcasadella/mmsegmentation/workdir/mapillary/implementation/raw/ > /home/gcasadella/mmsegmentation/workdir/scripts/out.out
