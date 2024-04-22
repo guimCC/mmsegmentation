@@ -1,0 +1,98 @@
+/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/launch.py:183: FutureWarning: The module torch.distributed.launch is deprecated
+and will be removed in future. Use torchrun.
+Note that --use-env is set by default in torchrun.
+If your script expects `--local-rank` argument to be set, please
+change it to read from `os.environ['LOCAL_RANK']` instead. See 
+https://pytorch.org/docs/stable/distributed.html#launch-utility for 
+further instructions
+
+  warnings.warn(
+[2024-04-17 17:24:46,413] torch.distributed.run: [WARNING] 
+[2024-04-17 17:24:46,413] torch.distributed.run: [WARNING] *****************************************
+[2024-04-17 17:24:46,413] torch.distributed.run: [WARNING] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+[2024-04-17 17:24:46,413] torch.distributed.run: [WARNING] *****************************************
+/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/mmengine/utils/dl_utils/setup_env.py:56: UserWarning: Setting MKL_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed.
+  warnings.warn(
+/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/mmengine/utils/dl_utils/setup_env.py:56: UserWarning: Setting MKL_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed.
+  warnings.warn(
+/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/cuda/__init__.py:628: UserWarning: Can't initialize NVML
+  warnings.warn("Can't initialize NVML")
+/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/cuda/__init__.py:628: UserWarning: Can't initialize NVML
+  warnings.warn("Can't initialize NVML")
+Traceback (most recent call last):
+  File "tools/train.py", line 109, in <module>
+    main()
+  File "tools/train.py", line 97, in main
+    runner = Runner.from_cfg(cfg)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/mmengine/runner/runner.py", line 462, in from_cfg
+    runner = cls(
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/mmengine/runner/runner.py", line 372, in __init__
+    self.setup_env(env_cfg)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/mmengine/runner/runner.py", line 681, in setup_env
+    broadcast(timestamp)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/mmengine/dist/dist.py", line 312, in broadcast
+    torch_dist.broadcast(data_on_device, src, group)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/c10d_logger.py", line 72, in wrapper
+    return func(*args, **kwargs)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/distributed_c10d.py", line 1910, in broadcast
+    work = default_pg.broadcast([tensor], opts)
+torch.distributed.DistBackendError: NCCL error in: /opt/conda/conda-bld/pytorch_1704987301168/work/torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1691, unhandled system error (run with NCCL_DEBUG=INFO for details), NCCL version 2.19.3
+ncclSystemError: System call (e.g. socket, malloc) or external library call failed or device error. 
+Last error:
+nvmlDeviceGetHandleByIndex(0) failed: Unknown Error
+Traceback (most recent call last):
+  File "tools/train.py", line 109, in <module>
+    main()
+  File "tools/train.py", line 97, in main
+    runner = Runner.from_cfg(cfg)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/mmengine/runner/runner.py", line 462, in from_cfg
+    runner = cls(
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/mmengine/runner/runner.py", line 372, in __init__
+    self.setup_env(env_cfg)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/mmengine/runner/runner.py", line 681, in setup_env
+    broadcast(timestamp)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/mmengine/dist/dist.py", line 312, in broadcast
+    torch_dist.broadcast(data_on_device, src, group)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/c10d_logger.py", line 72, in wrapper
+    return func(*args, **kwargs)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/distributed_c10d.py", line 1910, in broadcast
+    work = default_pg.broadcast([tensor], opts)
+torch.distributed.DistBackendError: NCCL error in: /opt/conda/conda-bld/pytorch_1704987301168/work/torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1691, unhandled system error (run with NCCL_DEBUG=INFO for details), NCCL version 2.19.3
+ncclSystemError: System call (e.g. socket, malloc) or external library call failed or device error. 
+Last error:
+nvmlDeviceGetHandleByIndex(0) failed: Unknown Error
+[2024-04-17 17:24:51,436] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 48792 closing signal SIGTERM
+[2024-04-17 17:24:51,468] torch.distributed.elastic.multiprocessing.api: [ERROR] failed (exitcode: 1) local_rank: 1 (pid: 48793) of binary: /home/gcasadella/miniconda3/envs/openmmlab/bin/python
+Traceback (most recent call last):
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/launch.py", line 198, in <module>
+    main()
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/launch.py", line 194, in main
+    launch(args)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/launch.py", line 179, in launch
+    run(args)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/run.py", line 803, in run
+    elastic_launch(
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 135, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 268, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+tools/train.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-04-17_17:24:51
+  host      : cudahpc09
+  rank      : 1 (local_rank: 1)
+  exitcode  : 1 (pid: 48793)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

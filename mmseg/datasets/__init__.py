@@ -25,6 +25,13 @@ from .potsdam import PotsdamDataset
 from .refuge import REFUGEDataset
 from .stare import STAREDataset
 from .synapse import SynapseDataset
+
+from .easy_portrait_portrait_segmentation import EasyPortraitPSDataset
+from .easy_portrait_face_parsing import EasyPortraitFPDataset
+from .easy_portrait import EasyPortraitDataset
+
+from .mapillary_as_cityscapes import MapillaryAsCityscapesDataset
+
 # yapf: disable
 from .transforms import (CLAHE, AdjustGamma, Albu, BioMedical3DPad,
                          BioMedical3DRandomCrop, BioMedical3DRandomFlip,
@@ -60,5 +67,6 @@ __all__ = [
     'MapillaryDataset_v2', 'Albu', 'LEVIRCDDataset',
     'LoadMultipleRSImageFromFile', 'LoadSingleRSImageFromFile',
     'ConcatCDInput', 'BaseCDDataset', 'DSDLSegDataset', 'BDD100KDataset',
-    'NYUDataset'
+    'NYUDataset', 'EasyPortraitPSDataset', 'EasyPortraitFPDatasetCross',
+    'EasyPortraitDataset', 'MapillaryAsCityscapesDataset'
 ]

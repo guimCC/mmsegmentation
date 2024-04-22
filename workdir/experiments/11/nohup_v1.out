@@ -1,0 +1,521 @@
+/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/launch.py:183: FutureWarning: The module torch.distributed.launch is deprecated
+and will be removed in future. Use torchrun.
+Note that --use-env is set by default in torchrun.
+If your script expects `--local-rank` argument to be set, please
+change it to read from `os.environ['LOCAL_RANK']` instead. See 
+https://pytorch.org/docs/stable/distributed.html#launch-utility for 
+further instructions
+
+  warnings.warn(
+[2024-03-19 18:22:35,095] torch.distributed.run: [WARNING] 
+[2024-03-19 18:22:35,095] torch.distributed.run: [WARNING] *****************************************
+[2024-03-19 18:22:35,095] torch.distributed.run: [WARNING] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+[2024-03-19 18:22:35,095] torch.distributed.run: [WARNING] *****************************************
+/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/mmengine/utils/dl_utils/setup_env.py:56: UserWarning: Setting MKL_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed.
+  warnings.warn(
+/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/mmengine/utils/dl_utils/setup_env.py:56: UserWarning: Setting MKL_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed.
+  warnings.warn(
+03/19 18:22:44 - mmengine - INFO - 
+------------------------------------------------------------
+System environment:
+    sys.platform: linux
+    Python: 3.8.18 (default, Sep 11 2023, 13:40:15) [GCC 11.2.0]
+    CUDA available: True
+    MUSA available: False
+    numpy_random_seed: 1828863954
+    GPU 0,1,2,3,4,5,6,7: NVIDIA GeForce GTX 1080 Ti
+    CUDA_HOME: /usr/local/cuda
+    NVCC: Cuda compilation tools, release 12.3, V12.3.107
+    GCC: gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+    PyTorch: 2.2.0
+    PyTorch compiling details: PyTorch built with:
+  - GCC 9.3
+  - C++ Version: 201703
+  - Intel(R) oneAPI Math Kernel Library Version 2023.1-Product Build 20230303 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v3.3.2 (Git Hash 2dc95a2ad0841e29db8b22fbccaf3e5da7992b01)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX2
+  - CUDA Runtime 12.1
+  - NVCC architecture flags: -gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86;-gencode;arch=compute_90,code=sm_90
+  - CuDNN 8.9.2
+  - Magma 2.6.1
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=12.1, CUDNN_VERSION=8.9.2, CXX_COMPILER=/opt/rh/devtoolset-9/root/usr/bin/c++, CXX_FLAGS= -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=11 -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOROCTRACER -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-function -Wno-unused-result -Wno-strict-overflow -Wno-strict-aliasing -Wno-stringop-overflow -Wsuggest-override -Wno-psabi -Wno-error=pedantic -Wno-error=old-style-cast -Wno-missing-braces -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_VERSION=2.2.0, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=ON, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, USE_ROCM_KERNEL_ASSERT=OFF, 
+
+    TorchVision: 0.17.0
+    OpenCV: 4.9.0
+    MMEngine: 0.10.3
+
+Runtime environment:
+    cudnn_benchmark: True
+    mp_cfg: {'mp_start_method': 'fork', 'opencv_num_threads': 0}
+    dist_cfg: {'backend': 'nccl'}
+    seed: 1828863954
+    Distributed launcher: pytorch
+    Distributed training: True
+    GPU number: 2
+------------------------------------------------------------
+
+03/19 18:22:45 - mmengine - INFO - Config:
+crop_size = (
+    512,
+    1024,
+)
+data_preprocessor = dict(
+    bgr_to_rgb=True,
+    mean=[
+        123.675,
+        116.28,
+        103.53,
+    ],
+    pad_val=0,
+    seg_pad_val=255,
+    size=(
+        512,
+        1024,
+    ),
+    std=[
+        58.395,
+        57.12,
+        57.375,
+    ],
+    type='SegDataPreProcessor')
+data_root = 'data/cityscapes/'
+dataset_type = 'CityscapesDataset'
+default_hooks = dict(
+    checkpoint=dict(by_epoch=False, interval=1000, type='CheckpointHook'),
+    logger=dict(interval=10, log_metric_by_epoch=False, type='LoggerHook'),
+    param_scheduler=dict(type='ParamSchedulerHook'),
+    sampler_seed=dict(type='DistSamplerSeedHook'),
+    timer=dict(type='IterTimerHook'),
+    visualization=dict(type='SegVisualizationHook'))
+default_scope = 'mmseg'
+env_cfg = dict(
+    cudnn_benchmark=True,
+    dist_cfg=dict(backend='nccl'),
+    mp_cfg=dict(mp_start_method='fork', opencv_num_threads=0))
+img_ratios = [
+    0.5,
+    0.75,
+    1.0,
+    1.25,
+    1.5,
+    1.75,
+]
+launcher = 'pytorch'
+load_from = None
+log_level = 'INFO'
+log_processor = dict(by_epoch=False)
+model = dict(
+    backbone=dict(
+        contract_dilation=True,
+        depth=50,
+        dilations=(
+            1,
+            1,
+            2,
+            4,
+        ),
+        norm_cfg=dict(requires_grad=True, type='SyncBN'),
+        norm_eval=False,
+        num_stages=4,
+        out_indices=(
+            0,
+            1,
+            2,
+            3,
+        ),
+        strides=(
+            1,
+            2,
+            1,
+            1,
+        ),
+        style='pytorch',
+        type='ResNetV1c'),
+    data_preprocessor=dict(
+        bgr_to_rgb=True,
+        mean=[
+            123.675,
+            116.28,
+            103.53,
+        ],
+        pad_val=0,
+        seg_pad_val=255,
+        size=(
+            512,
+            1024,
+        ),
+        std=[
+            58.395,
+            57.12,
+            57.375,
+        ],
+        type='SegDataPreProcessor'),
+    decode_head=dict(
+        align_corners=False,
+        channels=512,
+        dilations=(
+            1,
+            12,
+            24,
+            36,
+        ),
+        dropout_ratio=0.1,
+        in_channels=2048,
+        in_index=3,
+        loss_decode=dict(
+            loss_weight=1.0, type='CrossEntropyRewardLoss', use_sigmoid=False),
+        norm_cfg=dict(requires_grad=True, type='SyncBN'),
+        num_classes=19,
+        type='ASPPHead'),
+    init_cfg=dict(
+        checkpoint=
+        '/home/gcasadella/mmsegmentation/ckp/deeplabv3_r50-d8_512x1024_40k_cityscapes_20200605_022449-acadc2f8.pth',
+        type='Pretrained'),
+    pretrained='open-mmlab://resnet50_v1c',
+    test_cfg=dict(mode='whole'),
+    train_cfg=dict(),
+    type='EncoderDecoder')
+norm_cfg = dict(requires_grad=True, type='SyncBN')
+optim_wrapper = dict(
+    clip_grad=None,
+    optimizer=dict(lr=0.0001, momentum=0.9, type='SGD', weight_decay=0.0005),
+    type='OptimWrapper')
+optimizer = dict(lr=0.0001, momentum=0.9, type='SGD', weight_decay=0.0005)
+param_scheduler = [
+    dict(
+        begin=0,
+        by_epoch=False,
+        end=40000,
+        eta_min=1e-06,
+        power=0.9,
+        type='PolyLR'),
+]
+resume = False
+test_cfg = dict(type='TestLoop')
+test_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        data_prefix=dict(
+            img_path='leftImg8bit/val', seg_map_path='gtFine/val'),
+        data_root='data/cityscapes/',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(keep_ratio=True, scale=(
+                2048,
+                1024,
+            ), type='Resize'),
+            dict(type='LoadAnnotations'),
+            dict(type='PackSegInputs'),
+        ],
+        type='CityscapesDataset'),
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+test_evaluator = dict(
+    iou_metrics=[
+        'mIoU',
+    ], type='IoUMetric')
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(keep_ratio=True, scale=(
+        2048,
+        1024,
+    ), type='Resize'),
+    dict(type='LoadAnnotations'),
+    dict(type='PackSegInputs'),
+]
+train_cfg = dict(max_iters=40000, type='IterBasedTrainLoop', val_interval=1000)
+train_dataloader = dict(
+    batch_size=4,
+    dataset=dict(
+        data_prefix=dict(
+            img_path='leftImg8bit/train', seg_map_path='gtFine/train'),
+        data_root='data/cityscapes/',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(type='LoadAnnotations'),
+            dict(
+                keep_ratio=True,
+                ratio_range=(
+                    0.5,
+                    2.0,
+                ),
+                scale=(
+                    2048,
+                    1024,
+                ),
+                type='RandomResize'),
+            dict(
+                cat_max_ratio=0.75, crop_size=(
+                    512,
+                    1024,
+                ), type='RandomCrop'),
+            dict(prob=0.5, type='RandomFlip'),
+            dict(type='PhotoMetricDistortion'),
+            dict(type='PackSegInputs'),
+        ],
+        type='CityscapesDataset'),
+    num_workers=2,
+    persistent_workers=True,
+    sampler=dict(shuffle=True, type='InfiniteSampler'))
+train_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations'),
+    dict(
+        keep_ratio=True,
+        ratio_range=(
+            0.5,
+            2.0,
+        ),
+        scale=(
+            2048,
+            1024,
+        ),
+        type='RandomResize'),
+    dict(cat_max_ratio=0.75, crop_size=(
+        512,
+        1024,
+    ), type='RandomCrop'),
+    dict(prob=0.5, type='RandomFlip'),
+    dict(type='PhotoMetricDistortion'),
+    dict(type='PackSegInputs'),
+]
+tta_model = dict(type='SegTTAModel')
+tta_pipeline = [
+    dict(backend_args=None, type='LoadImageFromFile'),
+    dict(
+        transforms=[
+            [
+                dict(keep_ratio=True, scale_factor=0.5, type='Resize'),
+                dict(keep_ratio=True, scale_factor=0.75, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.0, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.25, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.5, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.75, type='Resize'),
+            ],
+            [
+                dict(direction='horizontal', prob=0.0, type='RandomFlip'),
+                dict(direction='horizontal', prob=1.0, type='RandomFlip'),
+            ],
+            [
+                dict(type='LoadAnnotations'),
+            ],
+            [
+                dict(type='PackSegInputs'),
+            ],
+        ],
+        type='TestTimeAug'),
+]
+val_cfg = dict(type='ValLoop')
+val_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        data_prefix=dict(
+            img_path='leftImg8bit/val', seg_map_path='gtFine/val'),
+        data_root='data/cityscapes/',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(keep_ratio=True, scale=(
+                2048,
+                1024,
+            ), type='Resize'),
+            dict(type='LoadAnnotations'),
+            dict(type='PackSegInputs'),
+        ],
+        type='CityscapesDataset'),
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+val_evaluator = dict(
+    iou_metrics=[
+        'mIoU',
+    ], type='IoUMetric')
+vis_backends = [
+    dict(type='LocalVisBackend'),
+    dict(type='TensorboardVisBackend'),
+]
+visualizer = dict(
+    name='visualizer',
+    type='SegLocalVisualizer',
+    vis_backends=[
+        dict(type='LocalVisBackend'),
+        dict(type='TensorboardVisBackend'),
+    ])
+work_dir = 'workdir/experiments/11/'
+
+/home/gcasadella/mmsegmentation/mmseg/models/backbones/resnet.py:431: UserWarning: DeprecationWarning: pretrained is a deprecated, please use "init_cfg" instead
+  warnings.warn('DeprecationWarning: pretrained is a deprecated, '
+2024-03-19 18:22:47.697308: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
+2024-03-19 18:22:47.750495: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+/home/gcasadella/mmsegmentation/mmseg/models/builder.py:36: UserWarning: ``build_loss`` would be deprecated soon, please use ``mmseg.registry.MODELS.build()`` 
+  warnings.warn('``build_loss`` would be deprecated soon, please use '
+/home/gcasadella/mmsegmentation/mmseg/models/losses/cross_entropy_reward_loss.py:138: UserWarning: Default ``avg_non_ignore`` is False, if you would like to ignore the certain label and average loss over non-ignore labels, which is the same with PyTorch official cross_entropy, set ``avg_non_ignore=True``.
+  warnings.warn(
+2024-03-19 18:22:48.575011: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+/home/gcasadella/mmsegmentation/mmseg/models/backbones/resnet.py:431: UserWarning: DeprecationWarning: pretrained is a deprecated, please use "init_cfg" instead
+  warnings.warn('DeprecationWarning: pretrained is a deprecated, '
+/home/gcasadella/mmsegmentation/mmseg/models/builder.py:36: UserWarning: ``build_loss`` would be deprecated soon, please use ``mmseg.registry.MODELS.build()`` 
+  warnings.warn('``build_loss`` would be deprecated soon, please use '
+/home/gcasadella/mmsegmentation/mmseg/models/losses/cross_entropy_reward_loss.py:138: UserWarning: Default ``avg_non_ignore`` is False, if you would like to ignore the certain label and average loss over non-ignore labels, which is the same with PyTorch official cross_entropy, set ``avg_non_ignore=True``.
+  warnings.warn(
+/home/gcasadella/mmsegmentation/mmseg/engine/hooks/visualization_hook.py:60: UserWarning: The draw is False, it means that the hook for visualization will not take effect. The results will NOT be visualized or stored.
+  warnings.warn('The draw is False, it means that the '
+03/19 18:22:51 - mmengine - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+before_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) DistSamplerSeedHook                
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) SegVisualizationHook               
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) IterTimerHook                      
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_val_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) SegVisualizationHook               
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_val_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_test_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_test_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_test_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) SegVisualizationHook               
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_run:
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+/home/gcasadella/mmsegmentation/mmseg/engine/hooks/visualization_hook.py:60: UserWarning: The draw is False, it means that the hook for visualization will not take effect. The results will NOT be visualized or stored.
+  warnings.warn('The draw is False, it means that the '
+03/19 18:22:53 - mmengine - WARNING - The prefix is not set in metric class IoUMetric.
+03/19 18:22:53 - mmengine - INFO - load model from: open-mmlab://resnet50_v1c
+03/19 18:22:53 - mmengine - INFO - Loads checkpoint by openmmlab backend from path: open-mmlab://resnet50_v1c
+03/19 18:22:54 - mmengine - WARNING - The model and loaded state dict do not match exactly
+
+unexpected key in source state_dict: fc.weight, fc.bias
+
+03/19 18:22:54 - mmengine - INFO - load model from: /home/gcasadella/mmsegmentation/ckp/deeplabv3_r50-d8_512x1024_40k_cityscapes_20200605_022449-acadc2f8.pth
+03/19 18:22:54 - mmengine - INFO - Loads checkpoint by local backend from path: /home/gcasadella/mmsegmentation/ckp/deeplabv3_r50-d8_512x1024_40k_cityscapes_20200605_022449-acadc2f8.pth
+03/19 18:22:57 - mmengine - WARNING - The model and loaded state dict do not match exactly
+
+unexpected key in source state_dict: auxiliary_head.conv_seg.weight, auxiliary_head.conv_seg.bias, auxiliary_head.convs.0.conv.weight, auxiliary_head.convs.0.bn.weight, auxiliary_head.convs.0.bn.bias, auxiliary_head.convs.0.bn.running_mean, auxiliary_head.convs.0.bn.running_var, auxiliary_head.convs.0.bn.num_batches_tracked
+
+03/19 18:22:57 - mmengine - WARNING - "FileClient" will be deprecated in future. Please use io functions in https://mmengine.readthedocs.io/en/latest/api/fileio.html#file-io
+03/19 18:22:57 - mmengine - WARNING - "HardDiskBackend" is the alias of "LocalBackend" and the former will be deprecated in future.
+03/19 18:22:57 - mmengine - INFO - Checkpoints will be saved to /home/gcasadella/mmsegmentation/workdir/experiments/11.
+03/19 18:25:13 - mmengine - INFO - Iter(train) [   10/40000]  lr: 9.9980e-05  eta: 6 days, 7:00:24  time: 13.5940  data_time: 0.0118  memory: 10873  loss: 0.0376  decode.loss_ce_reward: 0.0376  decode.acc_seg: 94.7200
+03/19 18:25:34 - mmengine - INFO - Iter(train) [   20/40000]  lr: 9.9958e-05  eta: 3 days, 15:06:56  time: 2.0946  data_time: 0.0109  memory: 10083  loss: 0.0434  decode.loss_ce_reward: 0.0434  decode.acc_seg: 97.7223
+03/19 18:25:55 - mmengine - INFO - Iter(train) [   30/40000]  lr: 9.9935e-05  eta: 2 days, 17:48:56  time: 2.0949  data_time: 0.0110  memory: 10083  loss: 0.0440  decode.loss_ce_reward: 0.0440  decode.acc_seg: 93.7983
+03/19 18:26:16 - mmengine - INFO - Iter(train) [   40/40000]  lr: 9.9913e-05  eta: 2 days, 7:09:58  time: 2.0961  data_time: 0.0109  memory: 10083  loss: 0.0454  decode.loss_ce_reward: 0.0454  decode.acc_seg: 95.5897
+03/19 18:26:37 - mmengine - INFO - Iter(train) [   50/40000]  lr: 9.9891e-05  eta: 2 days, 0:46:15  time: 2.0947  data_time: 0.0103  memory: 10083  loss: 0.0499  decode.loss_ce_reward: 0.0499  decode.acc_seg: 95.0346
+03/19 18:26:58 - mmengine - INFO - Iter(train) [   60/40000]  lr: 9.9869e-05  eta: 1 day, 20:30:47  time: 2.0989  data_time: 0.0101  memory: 10083  loss: 0.0408  decode.loss_ce_reward: 0.0408  decode.acc_seg: 94.1273
+03/19 18:27:19 - mmengine - INFO - Iter(train) [   70/40000]  lr: 9.9846e-05  eta: 1 day, 17:28:32  time: 2.1023  data_time: 0.0100  memory: 10083  loss: 0.0510  decode.loss_ce_reward: 0.0510  decode.acc_seg: 97.7382
+03/19 18:27:40 - mmengine - INFO - Iter(train) [   80/40000]  lr: 9.9824e-05  eta: 1 day, 15:11:51  time: 2.1033  data_time: 0.0105  memory: 10083  loss: 0.0383  decode.loss_ce_reward: 0.0383  decode.acc_seg: 95.7274
+03/19 18:28:01 - mmengine - INFO - Iter(train) [   90/40000]  lr: 9.9802e-05  eta: 1 day, 13:25:31  time: 2.1041  data_time: 0.0105  memory: 10083  loss: 0.0501  decode.loss_ce_reward: 0.0501  decode.acc_seg: 95.6666
+03/19 18:28:22 - mmengine - INFO - Iter(train) [  100/40000]  lr: 9.9779e-05  eta: 1 day, 12:00:25  time: 2.1047  data_time: 0.0108  memory: 10083  loss: 0.0461  decode.loss_ce_reward: 0.0461  decode.acc_seg: 97.2369
+03/19 18:28:43 - mmengine - INFO - Iter(train) [  110/40000]  lr: 9.9757e-05  eta: 1 day, 10:50:46  time: 2.1051  data_time: 0.0108  memory: 10083  loss: 0.0508  decode.loss_ce_reward: 0.0508  decode.acc_seg: 96.6812
+03/19 18:29:04 - mmengine - INFO - Iter(train) [  120/40000]  lr: 9.9735e-05  eta: 1 day, 9:53:38  time: 2.1229  data_time: 0.0106  memory: 10083  loss: 0.0418  decode.loss_ce_reward: 0.0418  decode.acc_seg: 96.9072
+03/19 18:29:25 - mmengine - INFO - Iter(train) [  130/40000]  lr: 9.9713e-05  eta: 1 day, 9:04:32  time: 2.1089  data_time: 0.0105  memory: 10083  loss: 0.0399  decode.loss_ce_reward: 0.0399  decode.acc_seg: 96.3605
+03/19 18:29:46 - mmengine - INFO - Iter(train) [  140/40000]  lr: 9.9690e-05  eta: 1 day, 8:22:21  time: 2.1082  data_time: 0.0102  memory: 10083  loss: 0.0496  decode.loss_ce_reward: 0.0496  decode.acc_seg: 93.6505
+03/19 18:30:07 - mmengine - INFO - Iter(train) [  150/40000]  lr: 9.9668e-05  eta: 1 day, 7:45:40  time: 2.1064  data_time: 0.0099  memory: 10083  loss: 0.0456  decode.loss_ce_reward: 0.0456  decode.acc_seg: 95.2829
+03/19 18:30:28 - mmengine - INFO - Iter(train) [  160/40000]  lr: 9.9646e-05  eta: 1 day, 7:13:33  time: 2.1070  data_time: 0.0098  memory: 10083  loss: 0.0440  decode.loss_ce_reward: 0.0440  decode.acc_seg: 95.7039
+03/19 18:30:49 - mmengine - INFO - Iter(train) [  170/40000]  lr: 9.9623e-05  eta: 1 day, 6:45:10  time: 2.1067  data_time: 0.0100  memory: 10083  loss: 0.0498  decode.loss_ce_reward: 0.0498  decode.acc_seg: 96.9641
+[2024-03-19 18:31:05,655] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 3003 closing signal SIGTERM
+[2024-03-19 18:31:07,875] torch.distributed.elastic.multiprocessing.api: [ERROR] failed (exitcode: -15) local_rank: 0 (pid: 3002) of binary: /home/gcasadella/miniconda3/envs/openmmlab/bin/python
+Traceback (most recent call last):
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/launch.py", line 198, in <module>
+    main()
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/launch.py", line 194, in main
+    launch(args)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/launch.py", line 179, in launch
+    run(args)
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/run.py", line 803, in run
+    elastic_launch(
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 135, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/gcasadella/miniconda3/envs/openmmlab/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 268, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+======================================================
+tools/train.py FAILED
+------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-03-19_18:31:05
+  host      : cudahpc09
+  rank      : 0 (local_rank: 0)
+  exitcode  : -15 (pid: 3002)
+  error_file: <N/A>
+  traceback : Signal 15 (SIGTERM) received by PID 3002
+======================================================
