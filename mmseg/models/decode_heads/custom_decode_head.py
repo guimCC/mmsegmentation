@@ -275,32 +275,17 @@ class ReinforceDecodeHead(BaseModule, metaclass=ABCMeta):
         Returns:
             dict[str, Tensor]: a dictionary of loss components
         """
-        #print("############ BUILDS -> ", self.loss_decode, self.reward_loss, self.reinforce_loss)
-        
-        # Implement the BASELINE calculation from the same batch of inputs
-        # Maybe implement some dropout to differentiate the forward pass
-        #baseline_logits = self.forward(inputs)
         
         seg_logits = self.forward(inputs)
+        
         # Compute the rewards for each batched image:
         mIoU_each_photo = self.reward(seg_logits, batch_data_samples)
+        
         mean_mIoU_other_photos = (np.sum(mIoU_each_photo) - mIoU_each_photo) / (len(mIoU_each_photo) - 1)
+        
         reward_vector_self_baseline = mIoU_each_photo - 0.1 * mean_mIoU_other_photos # To avoid negative numbers
-        reward_vector_self_less_constant = mIoU_each_photo - 0.15
-        #print("############ REWARD mIoUv2 -> ", mIoU_each_photo)
-        #print("############ REWARD mIoU -> ", mIoU_each_photo, mean_mIoU_other_photos, reward_vector_self_baseline)
         
-        #baseline_rewards = self.reward(baseline_logits, batch_data_samples)
-        #r = sample_rewards - baseline_rewards
-        
-        #print("############ REWARD -> ", sample_rewards, baseline_rewards, r)
-        
-        # Since we've got batch_size = 2, we          
         losses = self.loss_by_feat_reinforce(seg_logits, batch_data_samples, reward_vector_self_baseline)#, reward_vector_self_baseline)
-        
-        
-        #losses = self.loss_by_feat(seg_logits, batch_data_samples)
-        #print("############ LOSSES -> ", losses)
         
         return losses
 
@@ -425,17 +410,9 @@ class ReinforceDecodeHead(BaseModule, metaclass=ABCMeta):
         seg_label = seg_label.squeeze(1)
         
         reward_values = np.zeros(seg_logits.shape[0])
-        #rw2 = np.zeros(seg_logits.shape[0])
-        #print(seg_logits.shape, seg_label.shape)
+
         for i in range(seg_logits.shape[0]):
-            #self.mIoU_loss.reset() # Reset the reward computation
-            #print(seg_logits[i:i+1].shape, seg_label[i:i+1].shape)
-            #self.mIoU_loss.add(seg_logits[i:i+1], seg_label[i:i+1])
-            
-            #rw2[i] = self.mIoU_loss.value()
+
             reward_values[i] = self.mIoU_metric_loss.forward(seg_logits[i:i+1], seg_label[i:i+1])
-            #print("############ REWARD -> ", reward_values[i])
-        
-        #print("############ REWARD mIoU -> ", rw2)
         
         return reward_values
